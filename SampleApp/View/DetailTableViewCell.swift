@@ -16,6 +16,15 @@ class DetailTableViewCell: UITableViewCell {
     @IBOutlet  weak var lblStatus: UILabel!
     
     
+    var viewModel : StudentViewModel! {
+        didSet {
+            self.lblName.text = viewModel.name
+            self.lblClass.text = viewModel.className
+            self.lblSubject.text = viewModel.subject
+            self.lblStatus.text = viewModel.status
+            self.lblStatus.textColor = viewModel.statusColor
+        }
+    }
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

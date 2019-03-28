@@ -9,29 +9,6 @@
 import UIKit
 
 
-struct Student:Codable {
-    var name: String!
-    var className: String!
-    var marks : Int!
-    var subject: String!
-    var passed:Bool = false
-    
-    static func saveStudent(student:Student){
-        var arrStudents =    self.getStudents()
-        arrStudents.append(student)
-        //Save as JSon
-        let data = arrStudents.map { try? JSONEncoder().encode($0)}
-        UserDefaults.standard.set(data, forKey: "SavedStudents")
-        UserDefaults.standard.synchronize()
-    }
-    
-    static func getStudents()->[Student]{
-        if let data = UserDefaults.standard.array(forKey: "SavedStudents") as? [Data] {
-            
-            return data.map({try! JSONDecoder().decode(Student.self, from: $0)})
-        }
-        return [Student]()
-    }}
 
 
 class ViewController: UIViewController {
@@ -44,6 +21,8 @@ class ViewController: UIViewController {
     @IBOutlet  weak var textfSubject: UITextField!
 
     var pickerView = UIPickerView()
+    
+    let viewModel = ViewControllerViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,15 +47,7 @@ class ViewController: UIViewController {
             //Show Alert for marks
         }else{
             //Save Values
-            var student = Student()
-            student.name = self.textfName.text
-            student.marks =  Int(self.textfMarks.text ?? "0")
-            student.subject = self.textfSubject.text
-            student.className = self.textfClass.text
-            if student.marks >= 40 {
-                student.passed = true
-            }
-            Student.saveStudent(student: student)
+            self.viewModel.saveStudent(name: self.textfName.text!, subject: self.textfSubject.text!, className: self.textfClass.text!, marks: Int(self.textfMarks.text ?? "0")!)
             self.resetAllTextFeildValues()
         }
     }
@@ -140,5 +111,12 @@ extension ViewController: UIPickerViewDelegate,UIPickerViewDataSource {
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         let subject = self.arrSubjects[row]
         self.textfSubject.text = subject
+    }
+}
+
+extension ViewController {
+    @IBAction func detailButtonClicked(sender:UIBarButtonItem){
+        let detailVC = DetailTableViewController.detailTableViewController(viewModel: self.viewModel.getDetialViewModel())
+        self.navigationController?.pushViewController(detailVC, animated: true)
     }
 }

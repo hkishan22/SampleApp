@@ -12,7 +12,14 @@ import UIKit
 
 class DetailTableViewController: UITableViewController {
 
-    var arrStudents = Student.getStudents()
+    class func detailTableViewController(viewModel : DetailViewModel)->DetailTableViewController{
+        let detailVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "DetailTableViewController") as! DetailTableViewController
+        detailVC.viewModel = viewModel
+        return detailVC
+    }
+    
+    var viewModel : DetailViewModel!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,15 +40,13 @@ class DetailTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return self.arrStudents.count
+        return self.viewModel.arrStudentsModel.count
     }
 
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: DetailTableViewCell.identifire, for: indexPath)
-
-        // Configure the cell...
-
+        let cell = tableView.dequeueReusableCell(withIdentifier: DetailTableViewCell.identifire, for: indexPath) as! DetailTableViewCell
+        cell.viewModel = self.viewModel.arrStudentsModel[indexPath.row]
         return cell
     }
 
